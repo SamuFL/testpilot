@@ -126,6 +126,9 @@ autonomously executes test steps — no human intervention needed.
 # Run the default test (first YAML file in tests/)
 npx tsx src/runner.ts
 
+# Run all tests sequentially
+npx tsx src/runner.ts --all
+
 # Run a specific test
 npx tsx src/runner.ts --test tests/TC001-todomvc-add-and-complete.yaml
 
@@ -203,8 +206,11 @@ This keeps the core agent generic while allowing tests to carry domain-specific 
 - [x] Multi-provider architecture (Anthropic, GitHub Models, Interactive)
 - [x] Anthropic adapter (Claude Sonnet 4-6)
 - [x] Externalized site-specific hints into YAML test cases
-- [ ] Additional demo test cases
+- [x] agent-browser preflight check with actionable install instructions
+- [x] `--all` flag to run all test cases sequentially with aggregate summary
+- [x] Additional demo test cases (TC001–TC005 across TodoMVC, the-internet, books.toscrape.com, demoqa.com)
 - [ ] CI/CD pipeline integration
+- [ ] Assisted test case creation (record browser session → YAML)
 - [ ] Web UI and SaaS deployment
 
 ## License

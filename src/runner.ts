@@ -374,21 +374,6 @@ async function main() {
 
   ensureDirs();
 
-  // Parse args
-  let testFile: string;
-  const testArgIdx = process.argv.indexOf("--test");
-  if (testArgIdx !== -1 && process.argv[testArgIdx + 1]) {
-    testFile = path.resolve(process.argv[testArgIdx + 1]!);
-  } else {
-    // Default: first YAML in tests/
-    const files = fs.readdirSync(TESTS_DIR).filter((f) => f.endsWith(".yaml"));
-    if (files.length === 0) {
-      console.error("No test files found in tests/");
-      process.exit(1);
-    }
-    testFile = path.join(TESTS_DIR, files[0]!);
-  }
-
   // Parse --provider flag or use MODEL_PROVIDER env var
   // Priority: --provider CLI arg > MODEL_PROVIDER env var > auto-detect
   let provider: LLMProvider;
@@ -405,23 +390,68 @@ async function main() {
     provider = "interactive";
   }
 
-  console.log(`\n🧪 Test file: ${testFile}`);
-  console.log(`🤖 Provider: ${provider}`);
+  // Build list of test files to run
+  const allYamlFiles = fs
+    .readdirSync(TESTS_DIR)
+    .filter((f) => f.endsWith(".yaml"))
+    .sort()
+    .map((f) => path.join(TESTS_DIR, f));
 
-  try {
-    const report = await runTestCase(testFile, provider);
-    writeReport(report);
+  if (allYamlFiles.length === 0) {
+    console.error("No test files found in tests/");
+    process.exit(1);
+  }
 
-    console.log("\n" + "╔" + "═".repeat(78) + "╗");
-    console.log(
-      `║  ${report.status === "pass" ? "✅ TEST PASSED" : "❌ TEST FAILED"}: ${report.test_id} — ${report.title}`.padEnd(
-        79
-      ) + "║"
-    );
-    console.log("╚" + "═".repeat(78) + "╝\n");
-  } finally {
-    console.log("🔒 Closing browser...");
-    await closeBrowser();
+  let testFiles: string[];
+  if (process.argv.includes("--all")) {
+    testFiles = allYamlFiles;
+  } else if (process.argv.indexOf("--test") !== -1) {
+    const testArgIdx = process.argv.indexOf("--test");
+    testFiles = [path.resolve(process.argv[testArgIdx + 1]!)];
+  } else {
+    // Default: first YAML in tests/
+    testFiles = [allYamlFiles[0]!];
+  }
+
+  console.log(`\n🤖 Provider: ${provider}`);
+  console.log(`🧪 Running ${testFiles.length} test(s)...\n`);
+
+  const reports: TestReport[] = [];
+
+  for (const testFile of testFiles) {
+    console.log(`\n${"─".repeat(80)}`);
+    console.log(`▶  ${path.basename(testFile)}`);
+    console.log(`${"─".repeat(80)}`);
+    try {
+      const report = await runTestCase(testFile, provider);
+      writeReport(report);
+      reports.push(report);
+      console.log("\n" + "╔" + "═".repeat(78) + "╗");
+      console.log(
+        `║  ${report.status === "pass" ? "✅ PASSED" : "❌ FAILED"}: ${report.test_id} — ${report.title}`.padEnd(79) + "║"
+      );
+      console.log("╚" + "═".repeat(78) + "╝");
+    } catch (err) {
+      console.error(`\n💥 Fatal error running ${path.basename(testFile)}:`, err);
+    } finally {
+      console.log("🔒 Closing browser...");
+      await closeBrowser();
+    }
+  }
+
+  // Print aggregate summary when running multiple tests
+  if (reports.length > 1) {
+    const passed = reports.filter((r) => r.status === "pass").length;
+    const failed = reports.length - passed;
+    console.log(`\n${"═".repeat(80)}`);
+    console.log(`SUITE SUMMARY — ${reports.length} tests: ✅ ${passed} passed  ❌ ${failed} failed`);
+    console.log(`${"═".repeat(80)}`);
+    for (const r of reports) {
+      const icon = r.status === "pass" ? "✅" : "❌";
+      console.log(`  ${icon}  ${r.test_id.padEnd(8)} ${r.title}`);
+    }
+    console.log(`${"═".repeat(80)}\n`);
+    if (failed > 0) process.exit(1);
   }
 }
 

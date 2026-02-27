@@ -33,7 +33,11 @@ testpilot/
 ├── package.json           ← Node project config (type: module)
 ├── tsconfig.json          ← TypeScript config
 ├── tests/                 ← Test case YAML files
-│   └── TC001-todomvc-add-and-complete.yaml
+│   ├── TC001-todomvc-add-and-complete.yaml
+│   ├── TC002-the-internet-valid-login.yaml
+│   ├── TC003-the-internet-invalid-login.yaml
+│   ├── TC004-books-toscrape-browse-and-detail.yaml
+│   └── TC005-demoqa-practice-form.yaml
 ├── src/                   ← TypeScript source
 │   ├── runner.ts          ← Main test runner / orchestrator
 │   ├── browser.ts         ← agent-browser CLI wrapper
@@ -104,7 +108,8 @@ Provider selection: `MODEL_PROVIDER` env var → `--provider` CLI flag → auto-
 ### Running tests
 
 ```bash
-npx tsx src/runner.ts                                    # default test
+npx tsx src/runner.ts                                    # default test (first YAML)
+npx tsx src/runner.ts --all                              # run all tests sequentially
 npx tsx src/runner.ts --test tests/TC001-*.yaml          # specific test
 ```
 
@@ -172,12 +177,15 @@ in the system prompt in `src/runner.ts` so the LLM knows them at execution time.
 ## Roadmap
 
 - **Autonomous execution** — LLM reads snapshot and decides commands without human input ✅
+- **Multi-test suites** — Run multiple YAML files in sequence with aggregate reports ✅
+- **Demo test cases** — TC001–TC005 covering TodoMVC, auth flows, navigation, complex forms ✅
+- **agent-browser preflight check** — fail fast with install instructions if CLI missing ✅
+- **CI/CD** — Run tests in headless mode in pipelines (tracked: `testpilot-guw`)
+- **Assisted test case creation** — Record a browser session and generate YAML automatically (tracked: `testpilot-fnj`)
 - **JIRA X-Ray integration** — Import test cases from X-Ray, report results back
-- **CI/CD** — Run tests in headless mode in pipelines
 - **Visual regression** — Use `agent-browser diff` for visual comparisons
-- **Multi-test suites** — Run multiple YAML files in sequence with aggregate reports
-- **Web UI** — Browser-based dashboard for running and reviewing tests
-- **SaaS deployment** — Hosted service for teams
+- **Web UI** — Browser-based dashboard for running and reviewing tests (tracked: `testpilot-kwt`)
+- **SaaS deployment** — Hosted service for teams (tracked: `testpilot-2pm`)
 
 ## Landing the Plane (Session Completion)
 
