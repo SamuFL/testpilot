@@ -62,6 +62,7 @@ just like a human manual tester would.
 
 - **Node.js** ≥ 22 (uses ESM modules)
 - **npm** (comes with Node.js)
+- **agent-browser** CLI — installed globally (see step 2 below)
 - An **Anthropic API key** (recommended) or a **GitHub PAT** with `models` scope
 
 ### Installation
@@ -72,10 +73,14 @@ git clone <repo-url>
 cd testpilot
 npm install
 
-# 2. Create your environment file from the example
+# 2. Install agent-browser CLI globally and its required browser (Chromium)
+npm install -g agent-browser
+npx playwright install chromium
+
+# 3. Create your environment file from the example
 cp .env.example .env
 
-# 3. Edit .env — set your preferred provider and API key
+# 4. Edit .env — set your preferred provider and API key
 ```
 
 ### LLM Providers

@@ -15,6 +15,36 @@ const execFileAsync = promisify(execFile);
 const AGENT_BROWSER = "agent-browser";
 const DEFAULT_TIMEOUT = 30_000; // 30s per command
 
+/**
+ * Check that the `agent-browser` CLI is installed and reachable on PATH.
+ * Throws a descriptive error with install instructions if it is missing.
+ */
+export async function checkAgentBrowser(): Promise<void> {
+  try {
+    await execFileAsync(AGENT_BROWSER, ["--version"], { timeout: 5_000 });
+  } catch (err: any) {
+    // ENOENT means the binary was not found on PATH
+    if (err.code === "ENOENT") {
+      console.error(`
+ERROR: \`agent-browser\` CLI not found on PATH.
+
+testpilot requires the agent-browser CLI to control the browser.
+Install it globally with npm:
+
+    npm install -g agent-browser
+
+Then install the required Playwright browser (Chromium):
+
+    npx playwright install chromium
+
+After that, re-run testpilot.
+`);
+      process.exit(1);
+    }
+    // Any other error (e.g. non-zero exit) still means the binary exists — ignore it.
+  }
+}
+
 export interface BrowserCommandResult {
   stdout: string;
   stderr: string;

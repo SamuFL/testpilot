@@ -18,6 +18,7 @@ import path from "node:path";
 import { parse as parseYaml } from "yaml";
 import type { TestCase, TestReport, StepResult } from "./types.js";
 import {
+  checkAgentBrowser,
   openUrl,
   getSnapshot,
   closeBrowser,
@@ -368,6 +369,9 @@ async function runTestCase(testFile: string, provider: LLMProvider): Promise<Tes
 // ─── CLI Entry Point ─────────────────────────────────────────────────────────
 
 async function main() {
+  // Safety check — fail fast with a helpful message if agent-browser is missing.
+  await checkAgentBrowser();
+
   ensureDirs();
 
   // Parse args
