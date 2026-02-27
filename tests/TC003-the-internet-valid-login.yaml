@@ -1,0 +1,44 @@
+# TC003 - Login with valid credentials on The Internet (herokuapp)
+# Positive authentication test — verifies the success state after correct login.
+
+id: TC003
+title: "Login with valid credentials on The Internet"
+priority: P2
+tags:
+  - demo
+  - auth
+  - login
+  - positive
+
+target_url: "https://the-internet.herokuapp.com/login"
+
+preconditions:
+  - "Browser is open and not logged in"
+
+site_context:
+  - "The Internet is a practice site for automation, hosted on Heroku."
+  - "The login page has a simple form with Username and Password fields and a Login button."
+  - "Valid credentials: username 'tomsmith', password 'SuperSecretPassword!'"
+  - "On successful login the page redirects to /secure and shows a green flash message."
+  - "There is no cookie consent banner on this site."
+
+steps:
+  - step: 1
+    action: "Open https://the-internet.herokuapp.com/login and verify the login form is visible."
+    expected: "The login page loads with a 'Login' heading, a Username field, a Password field, and a Login button."
+
+  - step: 2
+    action: "Type 'tomsmith' into the Username field."
+    expected: "The Username field contains 'tomsmith'."
+
+  - step: 3
+    action: "Type 'SuperSecretPassword!' into the Password field."
+    expected: "The Password field is filled (contents hidden)."
+
+  - step: 4
+    action: "Click the Login button."
+    expected: "The page redirects to the secure area. A green flash message is displayed confirming successful login (e.g. 'You logged into a secure area!')."
+
+  - step: 5
+    action: "Verify the secure area page is displayed and a logout option is available."
+    expected: "The page heading reads 'Secure Area'. A 'Logout' button is visible in the page."

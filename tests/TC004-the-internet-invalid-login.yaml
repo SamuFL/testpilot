@@ -1,0 +1,43 @@
+# TC004 - Login with invalid credentials on The Internet (herokuapp)
+# Negative authentication test — verifies that the error state is shown correctly.
+
+id: TC004
+title: "Login with invalid credentials on The Internet"
+priority: P2
+tags:
+  - demo
+  - auth
+  - login
+  - negative
+
+target_url: "https://the-internet.herokuapp.com/login"
+
+preconditions:
+  - "Browser is open and not logged in"
+
+site_context:
+  - "The Internet is a practice site for automation, hosted on Heroku."
+  - "The login page has Username and Password fields and a Login button."
+  - "On failed login the page stays on /login and shows a red flash error message."
+  - "There is no cookie consent banner on this site."
+
+steps:
+  - step: 1
+    action: "Open https://the-internet.herokuapp.com/login and verify the login form is visible."
+    expected: "The login page loads with a Username field, a Password field, and a Login button. No error message is visible."
+
+  - step: 2
+    action: "Type 'wronguser' into the Username field."
+    expected: "The Username field contains 'wronguser'."
+
+  - step: 3
+    action: "Type 'wrongpassword' into the Password field."
+    expected: "The Password field is filled."
+
+  - step: 4
+    action: "Click the Login button."
+    expected: "The page stays on the login form. A red flash error message is displayed indicating the credentials are invalid (e.g. 'Your username is invalid!' or similar). The user is NOT redirected to a secure area."
+
+  - step: 5
+    action: "Verify the login form is still visible and ready for another attempt."
+    expected: "The Username field, Password field, and Login button are all still present on the page."

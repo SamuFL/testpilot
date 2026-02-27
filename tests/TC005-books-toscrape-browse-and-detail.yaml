@@ -1,0 +1,40 @@
+# TC005 - Browse a category and open a book detail page on books.toscrape.com
+# Exercises multi-page navigation and detail page assertions on a fake bookshop.
+
+id: TC005
+title: "Browse a category and open a book detail page on books.toscrape.com"
+priority: P2
+tags:
+  - demo
+  - navigation
+  - e-commerce
+
+target_url: "https://books.toscrape.com"
+
+preconditions:
+  - "Browser is open"
+
+site_context:
+  - "books.toscrape.com is a fake bookshop built for scraping/automation practice."
+  - "The left sidebar lists book categories (genres). Clicking one filters the catalogue."
+  - "Each book tile shows a cover image, title, star rating, and price."
+  - "Clicking a book title or cover opens the book detail page."
+  - "The detail page shows the full title, price, stock availability, and a description."
+  - "There is no cookie consent banner and no login required."
+
+steps:
+  - step: 1
+    action: "Open https://books.toscrape.com and verify the homepage loads with a list of books."
+    expected: "The homepage shows a grid of book tiles, each with a cover image and price. The category sidebar is visible on the left."
+
+  - step: 2
+    action: "In the left sidebar, click the 'Mystery' category link."
+    expected: "The page refreshes to show only books in the Mystery category. The page heading or breadcrumb indicates 'Mystery'."
+
+  - step: 3
+    action: "Click on the first book in the Mystery category listing to open its detail page."
+    expected: "The book detail page loads. The book title, price, and an 'Add to basket' button are visible."
+
+  - step: 4
+    action: "Verify the product details on the book detail page."
+    expected: "The detail page shows: a book title, a price (format: £XX.XX), a stock availability status (e.g. 'In stock'), and a product description."

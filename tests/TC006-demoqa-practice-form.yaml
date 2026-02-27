@@ -1,0 +1,58 @@
+# TC006 - Fill out the automation practice form on demoqa.com
+# Tests complex form interactions: text fields, radio buttons, checkboxes, and dropdowns.
+
+id: TC006
+title: "Fill out the automation practice form on demoqa.com"
+priority: P2
+tags:
+  - demo
+  - forms
+  - complex-ui
+
+target_url: "https://demoqa.com/automation-practice-form"
+
+preconditions:
+  - "Browser is open"
+
+site_context:
+  - "demoqa.com is a UI widgets practice site. It has intrusive banner ads — ignore them."
+  - "The practice form has sections for personal info, gender radio buttons, a date of birth picker, subjects, hobbies checkboxes, file upload, address, and state/city dropdowns."
+  - "Gender is a radio button group (Male / Female / Other)."
+  - "The Subjects field is an autocomplete input — type a subject and select from the dropdown."
+  - "State and City are dependent dropdowns — select State first, then City becomes available."
+  - "The Submit button is at the bottom of the form. On success a modal appears with a summary table."
+  - "Scroll down if form sections are below the fold — the page is long."
+  - "If an ad overlay appears, close it or scroll past it."
+
+steps:
+  - step: 1
+    action: "Open https://demoqa.com/automation-practice-form and verify the form loads."
+    expected: "The Student Registration Form is visible with a First Name field at the top."
+
+  - step: 2
+    action: "Fill in 'Jane' in the First Name field and 'Doe' in the Last Name field."
+    expected: "First Name shows 'Jane', Last Name shows 'Doe'."
+
+  - step: 3
+    action: "Fill in 'jane.doe@example.com' in the Email field."
+    expected: "The Email field contains 'jane.doe@example.com'."
+
+  - step: 4
+    action: "Select the 'Female' gender radio button."
+    expected: "The 'Female' radio button is selected."
+
+  - step: 5
+    action: "Fill in '0712345678' in the Mobile Number field."
+    expected: "The Mobile field contains '0712345678'."
+
+  - step: 6
+    action: "Scroll down to find the State dropdown. Click it and select 'NCR'."
+    expected: "The State dropdown shows 'NCR' as the selected value."
+
+  - step: 7
+    action: "Click the City dropdown (which should now be enabled) and select 'Delhi'."
+    expected: "The City dropdown shows 'Delhi' as the selected value."
+
+  - step: 8
+    action: "Scroll down to the Submit button and click it."
+    expected: "A confirmation modal appears with the title 'Thanks for submitting the form'. The modal contains a summary table showing the submitted values including the name 'Jane Doe'."
