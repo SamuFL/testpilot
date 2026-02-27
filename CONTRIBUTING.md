@@ -1,11 +1,11 @@
 # Contributing
 
-Thank you for your interest in contributing to **testsuite-poc**!
+Thank you for your interest in contributing to **testpilot**!
 
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/<your-username>/testsuite-poc.git`
+2. Clone your fork: `git clone https://github.com/<your-username>/testpilot.git`
 3. Install dependencies: `npm install`
 4. Create a branch: `git checkout -b feature/my-feature`
 5. Make your changes
@@ -52,6 +52,7 @@ npx tsx src/runner.ts --test tests/TC001-todomvc-add-and-complete.yaml
 ## Reporting Issues
 
 Use GitHub Issues. Include:
+
 - What you expected to happen
 - What actually happened
 - Steps to reproduce

@@ -2,7 +2,7 @@
 
 ## Project Context
 
-This is **testsuite-poc**: a Proof of Concept for an AI-powered test suite that
+This is **testpilot**: an AI-powered test suite that
 executes manual-style test cases against any web application using `agent-browser`.
 
 ## Issue Tracking
@@ -27,7 +27,7 @@ bd sync               # Sync with git
 ## Project Structure
 
 ```
-testsuite-poc/
+testpilot/
 ├── AGENTS.md              ← You are here
 ├── README.md              ← Human-readable docs
 ├── package.json           ← Node project config (type: module)
@@ -169,7 +169,7 @@ in the system prompt in `src/runner.ts` so the LLM knows them at execution time.
    snapshot marks duplicates with `[nth=N]`. Read surrounding context to pick the
    correct one.
 
-## Future Vision
+## Roadmap
 
 - **Autonomous execution** — LLM reads snapshot and decides commands without human input ✅
 - **JIRA X-Ray integration** — Import test cases from X-Ray, report results back

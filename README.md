@@ -1,8 +1,8 @@
-# testsuite-poc — Agentic AI Test Suite
+# testpilot — Agentic AI Test Suite
 
 ## Overview
 
-This is a Proof of Concept for an **automated test suite powered by agentic AI**.
+**testpilot** is an **automated test suite powered by agentic AI**.
 Instead of writing coded test scripts (like Selenium/Playwright), tests are defined
 as **natural-language test cases** (YAML) that an AI agent executes interactively,
 just like a human manual tester would.
@@ -69,7 +69,7 @@ just like a human manual tester would.
 ```bash
 # 1. Clone the repo and install dependencies
 git clone <repo-url>
-cd testsuite-poc
+cd testpilot
 npm install
 
 # 2. Create your environment file from the example
@@ -199,5 +199,15 @@ This keeps the core agent generic while allowing tests to carry domain-specific 
 - [x] Anthropic adapter (Claude Sonnet 4-6)
 - [x] Externalized site-specific hints into YAML test cases
 - [ ] Additional demo test cases
-- [ ] CI/CD pipeline integration (future)
-- [ ] Web UI and SaaS deployment (future)
+- [ ] CI/CD pipeline integration
+- [ ] Web UI and SaaS deployment
+
+## License
+
+This project is open source and licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+This means you are free to use, modify, and distribute this software, but if you run a modified version
+as a network service (e.g., SaaS), you **must** make the complete source code of your modified version
+available to users of that service under the same license.
+
+See [LICENSE.md](LICENSE.md) for the full license text.
