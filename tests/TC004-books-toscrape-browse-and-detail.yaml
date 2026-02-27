@@ -1,7 +1,7 @@
 # TC005 - Browse a category and open a book detail page on books.toscrape.com
 # Exercises multi-page navigation and detail page assertions on a fake bookshop.
 
-id: TC005
+id: TC004
 title: "Browse a category and open a book detail page on books.toscrape.com"
 priority: P2
 tags:

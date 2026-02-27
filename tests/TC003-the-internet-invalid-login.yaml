@@ -1,7 +1,7 @@
 # TC004 - Login with invalid credentials on The Internet (herokuapp)
 # Negative authentication test — verifies that the error state is shown correctly.
 
-id: TC004
+id: TC003
 title: "Login with invalid credentials on The Internet"
 priority: P2
 tags:

@@ -1,7 +1,7 @@
 # TC003 - Login with valid credentials on The Internet (herokuapp)
 # Positive authentication test — verifies the success state after correct login.
 
-id: TC003
+id: TC002
 title: "Login with valid credentials on The Internet"
 priority: P2
 tags:

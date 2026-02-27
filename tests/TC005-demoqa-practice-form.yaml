@@ -1,7 +1,7 @@
 # TC006 - Fill out the automation practice form on demoqa.com
 # Tests complex form interactions: text fields, radio buttons, checkboxes, and dropdowns.
 
-id: TC006
+id: TC005
 title: "Fill out the automation practice form on demoqa.com"
 priority: P2
 tags:
