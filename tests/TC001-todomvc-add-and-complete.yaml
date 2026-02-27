@@ -1,0 +1,43 @@
+# TC001 - Add and complete a todo item in TodoMVC
+# This test uses Playwright's public TodoMVC demo to verify basic CRUD operations.
+
+id: TC001
+title: "Add and complete a todo item in TodoMVC"
+priority: P1
+tags:
+  - smoke
+  - demo
+  - todomvc
+
+target_url: "https://demo.playwright.dev/todomvc/#/"
+
+preconditions:
+  - "Browser is open with a clean session (no existing todos)"
+
+site_context:
+  - "TodoMVC is a single-page app with a text input at the top to add todos."
+  - "New todos are added by typing in the input field and pressing Enter."
+  - "Each todo item has a toggle checkbox on the left to mark it as completed."
+  - "Completed todos get a line-through style and appear in the 'Completed' filter."
+  - "Filter links at the bottom: 'All', 'Active', 'Completed'."
+
+steps:
+  - step: 1
+    action: "Open the TodoMVC app at https://demo.playwright.dev/todomvc/#/. Verify the page loads with an empty todo list."
+    expected: "The TodoMVC app loads. A text input with placeholder 'What needs to be done?' is visible. No todo items are listed."
+
+  - step: 2
+    action: "Type 'Buy groceries' into the new todo input field and press Enter."
+    expected: "A new todo item 'Buy groceries' appears in the list. The input field is cleared. The item count shows '1 item left'."
+
+  - step: 3
+    action: "Type 'Walk the dog' into the new todo input field and press Enter."
+    expected: "A second todo item 'Walk the dog' appears below the first. The item count shows '2 items left'."
+
+  - step: 4
+    action: "Click the toggle checkbox next to 'Buy groceries' to mark it as completed."
+    expected: "'Buy groceries' is marked as completed (has a checkmark and line-through style). The item count shows '1 item left'."
+
+  - step: 5
+    action: "Click the 'Completed' filter link at the bottom of the todo list."
+    expected: "Only 'Buy groceries' (completed) is shown. 'Walk the dog' is hidden because it is still active."

@@ -1,0 +1,23 @@
+{
+  "name": "testsuite-poc",
+  "version": "0.1.0",
+  "description": "Agentic AI test suite — uses LLM + agent-browser to execute natural-language test cases against any website",
+  "main": "dist/runner.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "run-test": "tsx src/runner.ts",
+    "run-test:file": "tsx src/runner.ts --test",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["testing", "ai", "agent", "browser-automation", "llm", "natural-language", "accessibility"],
+  "author": "Samuel Ferraz-Leite",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^25.3.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "yaml": "^2.8.2"
+  }
+}
