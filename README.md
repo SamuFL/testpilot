@@ -156,6 +156,29 @@ The runner will:
 5. Repeat until the LLM marks the step as PASS or FAIL
 6. Generate a report (JSON + Markdown) in `reports/` and screenshots in `screenshots/`
 
+## CI/CD
+
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request to `main`.
+
+### Jobs
+
+| Job | Trigger | What it does |
+|-----|---------|--------------|
+| **Type-check** | always | Runs `npm run typecheck` (`tsc --noEmit`) |
+| **Run test suite** | only when `RUN_BROWSER_TESTS = true` | Installs `agent-browser` + Chromium, runs all tests, uploads reports and screenshots as artifacts |
+
+### Setup (one-time, in GitHub repo settings)
+
+1. **Add secret** — `Settings → Secrets and variables → Actions → New repository secret`
+   - Name: `ANTHROPIC_API_KEY`
+   - Value: your Anthropic API key
+
+2. **Enable browser tests** — `Settings → Secrets and variables → Actions → Variables → New repository variable`
+   - Name: `RUN_BROWSER_TESTS`
+   - Value: `true`
+
+> The `RUN_BROWSER_TESTS` variable acts as an opt-in gate. This prevents the browser test job from running (and failing) on forks or PRs from contributors who don't have the secret configured.
+
 ## How to write a test case
 
 Create a YAML file in `tests/`. See `tests/TC001-todomvc-add-and-complete.yaml` for the format:
@@ -209,7 +232,7 @@ This keeps the core agent generic while allowing tests to carry domain-specific 
 - [x] agent-browser preflight check with actionable install instructions
 - [x] `--all` flag to run all test cases sequentially with aggregate summary
 - [x] Additional demo test cases (TC001–TC005 across TodoMVC, the-internet, books.toscrape.com, demoqa.com)
-- [ ] CI/CD pipeline integration
+- [x] CI/CD pipeline (GitHub Actions — type-check on every push, browser tests with artifact upload)
 - [ ] Assisted test case creation (record browser session → YAML)
 - [ ] Web UI and SaaS deployment
 
