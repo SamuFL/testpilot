@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [main]
 
+# Allow pushing to GHCR
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   # ── Job 1: Type-check ──────────────────────────────────────────────────────
   typecheck:
@@ -30,8 +35,6 @@ jobs:
   test:
     name: Run test suite
     runs-on: ubuntu-latest
-    # Only run the full suite when an Anthropic key is available.
-    # On forks / external PRs the secret will be absent — skip gracefully.
     if: ${{ vars.RUN_BROWSER_TESTS == 'true' }}
     needs: typecheck
 
@@ -75,3 +78,38 @@ jobs:
           name: screenshots
           path: screenshots/
           retention-days: 30
+
+  # ── Job 3: Build & publish Docker image ─────────────────────────────────────
+  docker:
+    name: Build & push Docker image
+    runs-on: ubuntu-latest
+    needs: typecheck
+    # Only publish on push to main (not on PRs)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=sha
+            type=raw,value=latest
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
