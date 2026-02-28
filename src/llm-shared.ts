@@ -19,6 +19,8 @@ export interface LLMRequest {
   previousActions: string[]; // commands already executed this step
   pageUrl: string;
   pageTitle: string;
+  iteration: number; // current iteration (1-based)
+  maxIterations: number; // maximum iterations allowed
 }
 
 export interface LLMAdapter {
@@ -44,14 +46,24 @@ Fields:
 - thought: brief reasoning about the current state and what you'll do
 - commands: array of agent-browser CLI commands to execute (e.g. ["click @e5", "wait 1500"])
 - done: true if the step is COMPLETE (either passed or failed), false if more actions needed
-- success: true if the expected result is achieved (only meaningful when done=true)
-- actual_result: what actually happened (only meaningful when done=true)
+- success: true ONLY if the expected result is verified in the current snapshot (only meaningful when done=true)
+- actual_result: what actually happened — cite specific evidence from the snapshot (only meaningful when done=true)
 
 IMPORTANT:
 - Return 1-3 commands at a time, then wait for the next snapshot.
 - After any click/fill/navigation, your commands list should end there — you need a fresh snapshot before continuing.
 - When done=false, you MUST provide at least one command.
-- When done=true, commands can be empty.`;
+- When done=true, commands can be empty.
+
+VERIFICATION RULES:
+- You may ONLY set done=true AND success=true when you can point to concrete evidence
+  in the CURRENT snapshot that the expected result has been achieved. Quote the evidence
+  in actual_result (e.g., "The page now shows heading 'Secure Area' and text 'You logged
+  into a secure area!'").
+- If a command executed without error but you have NOT re-snapshotted to verify the
+  outcome, you MUST set done=false and include a re-snapshot command.
+- If after 3 attempts the expected result is still not visible, set done=true,
+  success=false, and explain what you tried and what you observed.`;
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -67,7 +79,15 @@ export function buildUserMessage(request: LLMRequest): string {
     msg += `**Expected result:** ${request.expectedResult}\n\n`;
   } else {
     msg += `## After executing: ${request.previousActions.slice(-3).join(", ")}\n\n`;
+    msg += `**Step action:** ${request.stepDescription}\n`;
+    msg += `**Expected result:** ${request.expectedResult}\n\n`;
   }
+
+  msg += `**Iteration:** ${request.iteration}/${request.maxIterations}`;
+  if (request.iteration >= request.maxIterations - 2) {
+    msg += ` ⚠️ Running low — you must conclude soon (pass or fail)`;
+  }
+  msg += `\n`;
 
   msg += `**Page URL:** ${request.pageUrl}\n`;
   msg += `**Page title:** ${request.pageTitle}\n\n`;

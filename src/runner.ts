@@ -89,7 +89,37 @@ The snapshot shows elements like:
 
 Use the [ref=eN] values with @eN to interact.
 
-## Critical Rules
+## Verification & Judgment Rules
+
+YOU ARE A STRICT TESTER. Your job is to VERIFY outcomes, not assume them.
+
+1. NEVER ASSUME SUCCESS. After performing an action, you MUST re-snapshot and
+   verify the expected result is actually visible in the new snapshot before
+   marking a step as done+success. A command executing without error does NOT
+   mean the expected result was achieved.
+
+2. VERIFY AGAINST THE EXPECTED RESULT. The step has an "expected result" —
+   you must find concrete evidence of that result in the snapshot (e.g., text
+   appearing, page navigating, elements changing state). If you cannot find
+   evidence, the step FAILS.
+
+3. FILL VERIFICATION: After a "fill" command, re-snapshot and check that the
+   field value in the snapshot reflects what was typed. Accessibility snapshots
+   show field values — look for them.
+
+4. NAVIGATION VERIFICATION: After a click that should navigate, verify the
+   page URL or title changed to match the expected destination.
+
+5. FAIL FAST. If after 3 attempts to achieve the expected result you still
+   cannot verify it, mark the step as done=true, success=false with a clear
+   explanation of what you tried and what you observed instead. Do NOT keep
+   retrying the same approach.
+
+6. BE HONEST IN actual_result. Report what the snapshot ACTUALLY shows, not
+   what you hope happened. Quote specific text or elements from the snapshot
+   as evidence.
+
+## Browser Automation Rules
 
 1. ALWAYS RE-SNAPSHOT after any action that changes the page (click, fill+submit,
    navigation). Refs are invalidated when the DOM changes — using stale refs will fail.
@@ -134,6 +164,54 @@ function buildSystemPrompt(testCase: TestCase): string {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/**
+ * Parse a command string into an array of arguments, respecting quoted strings.
+ * Handles both single and double quotes. Quotes are stripped from the result,
+ * and quoted values containing spaces are kept as a single token.
+ *
+ * Examples:
+ *   `fill @e2 "tomsmith"`       → ["fill", "@e2", "tomsmith"]
+ *   `fill @e5 "hello world"`    → ["fill", "@e5", "hello world"]
+ *   `click @e3`                 → ["click", "@e3"]
+ *   `fill @e2 'some "value"'`   → ["fill", "@e2", 'some "value"']
+ */
+function parseCommand(cmd: string): string[] {
+  const args: string[] = [];
+  let current = "";
+  let inQuote: string | null = null;
+
+  for (let i = 0; i < cmd.length; i++) {
+    const ch = cmd[i];
+
+    if (inQuote) {
+      if (ch === inQuote) {
+        // Closing quote — end the quoted section (don't add the quote char)
+        inQuote = null;
+      } else {
+        current += ch;
+      }
+    } else if (ch === '"' || ch === "'") {
+      // Opening quote — start a quoted section (don't add the quote char)
+      inQuote = ch;
+    } else if (/\s/.test(ch)) {
+      // Whitespace outside quotes — push current token if non-empty
+      if (current.length > 0) {
+        args.push(current);
+        current = "";
+      }
+    } else {
+      current += ch;
+    }
+  }
+
+  // Push the last token
+  if (current.length > 0) {
+    args.push(current);
+  }
+
+  return args;
+}
 
 function loadTestCase(filepath: string): TestCase {
   const raw = fs.readFileSync(filepath, "utf-8");
@@ -260,6 +338,8 @@ async function runTestCase(testFile: string, provider: LLMProvider): Promise<Tes
           previousActions: allCommands,
           pageUrl: url,
           pageTitle: title,
+          iteration: iter + 1,
+          maxIterations: MAX_ITERATIONS,
         };
 
         const action = await adapter.decideAction(request);
@@ -277,7 +357,7 @@ async function runTestCase(testFile: string, provider: LLMProvider): Promise<Tes
           }
 
           console.log(`  ⚡ Executing: agent-browser ${cmd}`);
-          const parts = cmd.split(/\s+/);
+          const parts = parseCommand(cmd);
           const result = await runBrowserCommand(parts);
           allCommands.push(cmd);
 
@@ -304,6 +384,13 @@ async function runTestCase(testFile: string, provider: LLMProvider): Promise<Tes
         snapshot = await getSnapshot();
         url = await getUrl();
         title = await getTitle();
+      }
+
+      // If loop exhausted without the LLM declaring done, it's a fail
+      if (stepStatus === "pass" && actualResult === "") {
+        stepStatus = "fail";
+        actualResult = `Step timed out after ${MAX_ITERATIONS} iterations without reaching a conclusion.`;
+        console.log(`  ❌ Step ${step.step} exhausted ${MAX_ITERATIONS} iterations without completing.`);
       }
     } catch (err: any) {
       stepStatus = "error";
