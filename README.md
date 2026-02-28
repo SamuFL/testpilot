@@ -156,6 +156,35 @@ The runner will:
 5. Repeat until the LLM marks the step as PASS or FAIL
 6. Generate a report (JSON + Markdown) in `reports/` and screenshots in `screenshots/`
 
+### Running with Docker
+
+The testpilot Docker image packages the runner with agent-browser and Chromium — no
+local installation of either is needed. The image does **not** contain test cases;
+mount your own via Docker volumes.
+
+```bash
+# Build the image
+docker build -t testpilot .
+
+# Run a single test
+docker run --rm \
+  -v ./tests:/app/tests \
+  -v ./reports:/app/reports \
+  -v ./screenshots:/app/screenshots \
+  -e ANTHROPIC_API_KEY=sk-ant-... \
+  testpilot --test tests/TC001-todomvc-add-and-complete.yaml
+
+# Run all tests in the mounted directory
+docker run --rm \
+  -v ./tests:/app/tests \
+  -v ./reports:/app/reports \
+  -v ./screenshots:/app/screenshots \
+  -e ANTHROPIC_API_KEY=sk-ant-... \
+  testpilot --all
+```
+
+Reports and screenshots are written back to the mounted host directories.
+
 ## CI/CD
 
 A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request to `main`.

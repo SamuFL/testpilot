@@ -14,10 +14,12 @@
   "keywords": ["testing", "ai", "agent", "browser-automation", "llm", "natural-language", "accessibility"],
   "author": "Samuel Ferraz-Leite <samuel.ferraz-leite@protonmail.com>",
   "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "tsx": "^4.21.0",
+    "yaml": "^2.8.2"
+  },
   "devDependencies": {
     "@types/node": "^25.3.2",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "yaml": "^2.8.2"
+    "typescript": "^5.9.3"
   }
 }

@@ -30,9 +30,11 @@ bd sync               # Sync with git
 testpilot/
 ├── AGENTS.md              ← You are here
 ├── README.md              ← Human-readable docs
+├── Dockerfile             ← Docker image (runner + agent-browser + Chromium)
+├── .dockerignore          ← Excludes tests/, reports/, .env, etc. from image
 ├── package.json           ← Node project config (type: module)
 ├── tsconfig.json          ← TypeScript config
-├── tests/                 ← Test case YAML files
+├── tests/                 ← Test case YAML files (NOT included in Docker image)
 │   ├── TC001-todomvc-add-and-complete.yaml
 │   ├── TC002-the-internet-valid-login.yaml
 │   ├── TC003-the-internet-invalid-login.yaml

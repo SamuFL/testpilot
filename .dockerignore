@@ -1,0 +1,14 @@
+node_modules/
+dist/
+tests/
+reports/
+screenshots/
+.beads/
+.env
+.env.example
+.git/
+.github/
+*.log
+*.md
+!package.json
+!package-lock.json
